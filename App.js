@@ -8,6 +8,8 @@ export default function App() {
     {color:"#", order:0},{color:"#", order:1},{color:"#", order:2}
   ])
 
+  const [isResultState, setIsResultState] = useState(false)
+  const [feedback, setFeedback] = useState("")
 
   function randomColorGenerator(){
     let r, g, b;
@@ -62,6 +64,10 @@ export default function App() {
 
   function onPress(buttonOrder){
     console.log(buttonOrder)
+    if(buttonOrder === 0)
+      setFeedback("Correct")
+    else 
+      setFeedback("Wrong")
   }
 
   //bunu sil
@@ -94,8 +100,8 @@ export default function App() {
         </Pressable>
       </View>
 
-      <View style={{borderWidth:1, padding: 4}}>
-        <Text>result feedback area</Text>
+      <View>
+        <Text>{feedback}</Text>
       </View>
 
       <Pressable style={{borderWidth:1, padding: 4}}>
