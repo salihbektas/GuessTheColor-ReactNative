@@ -32,27 +32,31 @@ export default function App() {
       color += value.toString(16)
     })
 
-    let newChices = [...choices];
-    newChices[0] = {color: color, order: index}
-    newChices[index].order = 0
+    let newChoices = [...choices];
+    newChoices[0] = {color: color, order: index}
+    newChoices[index].order = 0
 
     for(let index = 1; index < 3; ++index){
+
+      let color = "#";
 
       [r,g,b].map(value => {
         let min = value-100 >= 0 ? value-100 : 0
         let max = value+100 <= 255 ? value+100 : 255
 
-        
-        let color = Math.floor(Math.random() * (max - min)) + min
 
-        if(color < 16)
-          newChices[index].color += "0"
+        let fakeColor = Math.floor(Math.random() * (max - min)) + min
+
+        if(fakeColor < 16)
+          color += "0"
         
-        newChices[index].color += color.toString(16)
+        color += fakeColor.toString(16)
       })
+
+      newChoices[index].color = color
     }
 
-    setChoices(newChices)
+    setChoices(newChoices)
 
   }
 
@@ -60,6 +64,7 @@ export default function App() {
     console.log(buttonOrder)
   }
 
+  //bunu sil
   useEffect(()=>
     console.log(choices)
   ,[choices])
