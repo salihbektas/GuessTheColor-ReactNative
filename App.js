@@ -52,14 +52,12 @@ export default function App() {
       })
     }
 
-
-
-    //let color1 = Math.floor(Math.random() * (max - min)) + min
-    //console.log(r)
-    //console.log(color1)
-
     setChoices(newChices)
 
+  }
+
+  function onPress(buttonOrder){
+    console.log(buttonOrder)
   }
 
   useEffect(()=>
@@ -77,8 +75,18 @@ export default function App() {
       <View style={{height: "25%", width: "70%", borderRadius: 15, borderWidth:1, backgroundColor: choices[0].color}} />
       
 
-      <View style={{borderWidth:1, padding: 4}}>
-        <Text>field of choices</Text>
+      <View style={{flexDirection: "row", justifyContent: "space-evenly", width: "100%"}}>
+        <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPress(0)}>
+          <Text>{choices.find(item => item.order === 0).color}</Text>
+        </Pressable>
+
+        <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPress(1)}>
+          <Text>{choices.find(item => item.order === 1).color}</Text>
+        </Pressable>
+
+        <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPress(2)}>
+          <Text>{choices.find(item => item.order === 2).color}</Text>
+        </Pressable>
       </View>
 
       <View style={{borderWidth:1, padding: 4}}>
