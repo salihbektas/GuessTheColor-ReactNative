@@ -8,7 +8,6 @@ export default function App() {
     {color:"#", order:0},{color:"#", order:1},{color:"#", order:2}
   ])
 
-  const [isResultState, setIsResultState] = useState(false)
   const [feedback, setFeedback] = useState("")
 
   function randomColorGenerator(){
@@ -22,6 +21,10 @@ export default function App() {
   }
 
   function generateChoices(){
+    let answer = { color: "", order: null, isCorrect: true}
+    let fake1 = { color: "", order: null, isCorrect: false}
+    let fake2 = { color: "", order: null, isCorrect: false}
+
     let {r, g, b} = randomColorGenerator()
     let index = Math.floor(Math.random() * 3)
 
@@ -34,11 +37,14 @@ export default function App() {
       color += value.toString(16)
     })
 
-    let newChoices = [...choices];
-    newChoices[0] = {color: color, order: index}
-    newChoices[index].order = 0
+    answer.color = color
+    answer.order = index
 
-    for(let index = 1; index < 3; ++index){
+    fake1.order = (index+1) % 3
+    fake2.order = (index+2) % 3
+    
+    
+    for(let i = 0; i < 2; ++i){
 
       let color = "#";
 
@@ -55,19 +61,28 @@ export default function App() {
         color += fakeColor.toString(16)
       })
 
-      newChoices[index].color = color
+      if(i === 0)
+        fake1.color = color
+      
+      else
+        fake2.color = color
     }
 
-    setChoices(newChoices)
+    setChoices([answer, fake1, fake2])
 
   }
 
-  function onPress(buttonOrder){
-    console.log(buttonOrder)
-    if(buttonOrder === 0)
+  function onPressAnswer(buttonOrder){
+
+    if(choices.find(item => item.order ===buttonOrder).isCorrect)
       setFeedback("Correct")
     else 
       setFeedback("Wrong")
+  }
+
+  function onPressNext(){
+    setFeedback("")
+    generateChoices()
   }
 
   //bunu sil
@@ -83,30 +98,36 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <View style={{height: "25%", width: "70%", borderRadius: 15, borderWidth:1, backgroundColor: choices[0].color}} />
-      
+      <View style={{flex:4, alignItems: 'center', justifyContent: 'space-around', width: "100%"}} >
+        <View style={{height: "25%", width: "70%", borderRadius: 15, borderWidth:1, backgroundColor: choices[0].color}} />
+        
 
-      <View style={{flexDirection: "row", justifyContent: "space-evenly", width: "100%"}}>
-        <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPress(0)}>
-          <Text>{choices.find(item => item.order === 0).color}</Text>
-        </Pressable>
+        <View style={{flexDirection: "row", justifyContent: "space-evenly", width: "100%"}}>
+          <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPressAnswer(0)}>
+            <Text>{choices.find(item => item.order === 0).color}</Text>
+          </Pressable>
 
-        <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPress(1)}>
-          <Text>{choices.find(item => item.order === 1).color}</Text>
-        </Pressable>
+          <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPressAnswer(1)}>
+            <Text>{choices.find(item => item?.order === 1).color}</Text>
+          </Pressable>
 
-        <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPress(2)}>
-          <Text>{choices.find(item => item.order === 2).color}</Text>
-        </Pressable>
+          <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPressAnswer(2)}>
+            <Text>{choices.find(item => item.order === 2).color}</Text>
+          </Pressable>
+        </View>
+
+        <View>
+          <Text>{feedback}</Text>
+        </View>
+      </View>
+      <View style={{flex:1}}>
+        {feedback && (
+          <Pressable style={{borderWidth:1, padding: 4}} onPress={onPressNext}>
+            <Text>next question</Text>
+          </Pressable>
+        )}
       </View>
 
-      <View>
-        <Text>{feedback}</Text>
-      </View>
-
-      <Pressable style={{borderWidth:1, padding: 4}}>
-        <Text>next question button</Text>
-      </Pressable>
 
     </SafeAreaView>
   );
