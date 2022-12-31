@@ -98,20 +98,19 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <View style={{flex:4, alignItems: 'center', justifyContent: 'space-around', width: "100%"}} >
-        <View style={{height: "25%", width: "70%", borderRadius: 15, borderWidth:1, backgroundColor: choices[0].color}} />
+      <View style={styles.mainSide} >
+        <View style={styles.colorWindow(choices[0].color)} />
         
-
-        <View style={{flexDirection: "row", justifyContent: "space-evenly", width: "100%"}}>
-          <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPressAnswer(0)}>
+        <View style={styles.choicesArea}>
+          <Pressable style={styles.choice} onPress={() => onPressAnswer(0)}>
             <Text>{choices.find(item => item.order === 0).color}</Text>
           </Pressable>
 
-          <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPressAnswer(1)}>
+          <Pressable style={styles.choice} onPress={() => onPressAnswer(1)}>
             <Text>{choices.find(item => item?.order === 1).color}</Text>
           </Pressable>
 
-          <Pressable style={{backgroundColor:"lightgrey", padding: 8}} onPress={() => onPressAnswer(2)}>
+          <Pressable style={styles.choice} onPress={() => onPressAnswer(2)}>
             <Text>{choices.find(item => item.order === 2).color}</Text>
           </Pressable>
         </View>
@@ -120,9 +119,9 @@ export default function App() {
           <Text>{feedback}</Text>
         </View>
       </View>
-      <View style={{flex:1}}>
+      <View style={styles.bottomSide}>
         {feedback && (
-          <Pressable style={{borderWidth:1, padding: 4}} onPress={onPressNext}>
+          <Pressable style={styles.nextButton} onPress={onPressNext}>
             <Text>next question</Text>
           </Pressable>
         )}
@@ -140,4 +139,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
   },
+
+  mainSide: {
+    flex: 4,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: "100%"
+  },
+
+  colorWindow: (color) => ({
+    height: "25%",
+    width: "70%",
+    borderRadius: 15,
+    borderWidth: 3,
+    backgroundColor: color
+  }),
+
+  choice: {
+    backgroundColor:"lightgrey",
+    padding: 8
+  },
+
+  nextButton: {
+    borderWidth: 1,
+    padding: 4
+  },
+
+  choicesArea: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    width: "100%"
+  },
+
+  bottomSide: {flex:1},
 });
