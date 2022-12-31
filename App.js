@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,7 +8,9 @@ export default function App() {
     {color:"#", order:0},{color:"#", order:1},{color:"#", order:2}
   ])
 
-  const [feedback, setFeedback] = useState("")
+  const [isPlaying, setIsPlaying] = useState(true)
+
+  const selected = useRef(null)
 
   function randomColorGenerator(){
     let r, g, b;
@@ -74,14 +76,18 @@ export default function App() {
 
   function onPressAnswer(buttonOrder){
 
-    if(choices.find(item => item.order ===buttonOrder).isCorrect)
-      setFeedback("Correct")
-    else 
-      setFeedback("Wrong")
+    if(isPlaying)
+      setIsPlaying(false)
+    else
+      return
+
+    selected.current = buttonOrder
+
   }
 
   function onPressNext(){
-    setFeedback("")
+    setIsPlaying(true)
+    selected.current = -1
     generateChoices()
   }
 
@@ -102,25 +108,22 @@ export default function App() {
         <View style={styles.colorWindow(choices[0].color)} />
         
         <View style={styles.choicesArea}>
-          <Pressable style={styles.choice} onPress={() => onPressAnswer(0)}>
+          <Pressable style={styles.choice(isPlaying, selected.current === 0, choices.findIndex(item => item.order === 0) === 0)} onPress={() => onPressAnswer(0)}>
             <Text>{choices.find(item => item.order === 0).color}</Text>
           </Pressable>
 
-          <Pressable style={styles.choice} onPress={() => onPressAnswer(1)}>
+          <Pressable style={styles.choice(isPlaying, selected.current === 1, choices.findIndex(item => item.order === 1) === 0)} onPress={() => onPressAnswer(1)}>
             <Text>{choices.find(item => item?.order === 1).color}</Text>
           </Pressable>
 
-          <Pressable style={styles.choice} onPress={() => onPressAnswer(2)}>
+          <Pressable style={styles.choice(isPlaying, selected.current === 2, choices.findIndex(item => item.order === 2) === 0)} onPress={() => onPressAnswer(2)}>
             <Text>{choices.find(item => item.order === 2).color}</Text>
           </Pressable>
         </View>
 
-        <View>
-          <Text>{feedback}</Text>
-        </View>
       </View>
       <View style={styles.bottomSide}>
-        {feedback && (
+        {!isPlaying && (
           <Pressable style={styles.nextButton} onPress={onPressNext}>
             <Text>next question</Text>
           </Pressable>
@@ -155,10 +158,10 @@ const styles = StyleSheet.create({
     backgroundColor: color
   }),
 
-  choice: {
-    backgroundColor:"lightgrey",
+  choice: (isPlaying, isSelected, isCorrenct) => ({
+    backgroundColor: isPlaying ? "lightgrey" : isCorrenct ? "green" : isSelected ? "red" : "lightgrey",
     padding: 8
-  },
+  }),
 
   nextButton: {
     borderWidth: 1,
