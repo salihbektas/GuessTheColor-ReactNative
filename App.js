@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import colors from "./src/Colors";
 
 export default function App() {
   const [choices, setChoices] = useState([
@@ -9,6 +10,8 @@ export default function App() {
   ])
 
   const [isPlaying, setIsPlaying] = useState(true)
+
+  const [darkMode, setDarkmode] = useState(true)
 
   const selected = useRef(null)
 
@@ -91,21 +94,21 @@ export default function App() {
     generateChoices()
   }
 
-  //bunu sil
-  useEffect(()=>
-    console.log(choices)
-  ,[choices])
-
   useEffect(()=> {
     generateChoices()
   },[])
   
   
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
+    <SafeAreaView style={styles.container(darkMode)}>
+      <StatusBar style={darkMode ? "light" : "dark"} />
       <View style={styles.mainSide} >
-        <View style={styles.colorWindow(choices[0].color)} />
+        <View style={styles.dashboard} >
+          <Text style={styles.streak(darkMode)}>streak: #</Text>
+          <Pressable style={styles.settings(darkMode)} onPress={() => setDarkmode(mode => !mode)} />
+        </View>
+
+        <View style={styles.colorWindow(choices[0].color, darkMode)} />
         
         <View style={styles.choicesArea}>
           <Pressable style={styles.choice(isPlaying, selected.current === 0, choices.findIndex(item => item.order === 0) === 0)} onPress={() => onPressAnswer(0)}>
@@ -136,37 +139,48 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: (isDarkMode) => ({
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: isDarkMode ? colors.dark : colors.light,
     alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-
+  }),
+  
   mainSide: {
-    flex: 4,
+    flex: 8,
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     width: "100%"
   },
+  
+  dashboard: {
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 24
+  },
 
-  colorWindow: (color) => ({
-    height: "25%",
-    width: "70%",
+  streak: (darkMode) => ({
+    color: darkMode ? colors.light : colors.dark,
+    fontSize: 24,
+    fontWeight: "700"
+  }),
+
+  settings: (darkMode) => ({
+    height: 30,
+    width: 30,
+    backgroundColor: darkMode ? colors.light : colors.dark,
+    borderRadius: 8
+  }),
+
+  colorWindow: (color, isDarkMode) => ({
+    height: "60%",
+    width: "75%",
     borderRadius: 15,
-    borderWidth: 3,
+    borderWidth: 2,
+    borderColor: isDarkMode ? colors.light : colors.dark,
     backgroundColor: color
   }),
-
-  choice: (isPlaying, isSelected, isCorrenct) => ({
-    backgroundColor: isPlaying ? "lightgrey" : isCorrenct ? "green" : isSelected ? "red" : "lightgrey",
-    padding: 8
-  }),
-
-  nextButton: {
-    borderWidth: 1,
-    padding: 4
-  },
 
   choicesArea: {
     flexDirection: "row",
@@ -174,5 +188,18 @@ const styles = StyleSheet.create({
     width: "100%"
   },
 
+  choice: (isPlaying, isSelected, isCorrenct) => ({
+    backgroundColor: isPlaying ? colors.secondary : isCorrenct ? colors.correct : isSelected ? colors.wrong : colors.secondary,
+    padding: 8,
+    borderRadius: 6
+  }),
+  
   bottomSide: {flex:1},
+
+  nextButton: {
+    backgroundColor: colors.primary,
+    padding: 8,
+    borderRadius: 6
+  },
+
 });
