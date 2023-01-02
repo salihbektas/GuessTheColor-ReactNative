@@ -8,12 +8,15 @@ import { useSettings } from "../../context/SettingContext";
 
 export default function Home({ navigation }){
     const [choices, setChoices] = useState([
-        {color:"#", order:0},{color:"#", order:1},{color:"#", order:2}
+        {decimalColor:"", hexColor:"#", order:0},
+        {decimalColor:"", hexColor:"#", order:1},
+        {decimalColor:"", hexColor:"#", order:2}
       ])
     
       const [isPlaying, setIsPlaying] = useState(true)
     
-      const darkMode = useSettings().isDarkMode
+      const {isDarkMode : darkMode, colorCode} = useSettings()
+
     
       const selected = useRef(null)
     
@@ -35,16 +38,18 @@ export default function Home({ navigation }){
         let {r, g, b} = randomColorGenerator()
         let index = Math.floor(Math.random() * 3)
     
-        let color = "#";
+        let hexColor = "#"
+        let decimalColor = `${r},${g},${b}`;
     
         [r,g,b].map(value => {
           if(value < 16)
-            color += "0"
+          hexColor += "0"
     
-          color += value.toString(16)
+          hexColor += value.toString(16)
         })
     
-        answer.color = color
+        answer.hexColor = hexColor
+        answer.decimalColor = decimalColor
         answer.order = index
     
         fake1.order = (index+1) % 3
@@ -53,26 +58,30 @@ export default function Home({ navigation }){
         
         for(let i = 0; i < 2; ++i){
     
-          let color = "#";
+          let hexColor = "#"
+          let decimalColor = '';
     
-          [r,g,b].map(value => {
+          [r,g,b].forEach(value => {
             let min = value-100 >= 0 ? value-100 : 0
             let max = value+100 <= 255 ? value+100 : 255
-    
-    
+
             let fakeColor = Math.floor(Math.random() * (max - min)) + min
     
             if(fakeColor < 16)
-              color += "0"
+              hexColor += "0"
             
-            color += fakeColor.toString(16)
+            hexColor += fakeColor.toString(16)
+            decimalColor += fakeColor + ','
           })
     
-          if(i === 0)
-            fake1.color = color
-          
-          else
-            fake2.color = color
+          if(i === 0){
+            fake1.hexColor = hexColor
+            fake1.decimalColor = decimalColor.slice(0, -1) 
+          }
+          else{
+            fake2.hexColor = hexColor
+            fake2.decimalColor = decimalColor.slice(0, -1) 
+          }
         }
     
         setChoices([answer, fake1, fake2])
@@ -110,19 +119,34 @@ export default function Home({ navigation }){
               <Pressable style={styles.settings(darkMode)} onPress={() => navigation.navigate('Settings')} />
             </View>
     
-            <View style={styles.colorWindow(choices[0].color, darkMode)} />
+            <View style={styles.colorWindow(choices[0].hexColor, darkMode)} />
             
             <View style={styles.choicesArea}>
               <Pressable style={styles.choice(isPlaying, selected.current === 0, choices.findIndex(item => item.order === 0) === 0)} onPress={() => onPressAnswer(0)}>
-                <Text>{choices.find(item => item.order === 0).color}</Text>
+                <Text>
+                  {colorCode === 'HEX' 
+                    ? choices.find(item => item.order === 0).hexColor
+                    : choices.find(item => item.order === 0).decimalColor
+                  }
+                </Text>
               </Pressable>
     
               <Pressable style={styles.choice(isPlaying, selected.current === 1, choices.findIndex(item => item.order === 1) === 0)} onPress={() => onPressAnswer(1)}>
-                <Text>{choices.find(item => item?.order === 1).color}</Text>
+                <Text>
+                  {colorCode === 'HEX' 
+                    ? choices.find(item => item.order === 1).hexColor
+                    : choices.find(item => item.order === 1).decimalColor
+                  }
+                </Text>
               </Pressable>
     
               <Pressable style={styles.choice(isPlaying, selected.current === 2, choices.findIndex(item => item.order === 2) === 0)} onPress={() => onPressAnswer(2)}>
-                <Text>{choices.find(item => item.order === 2).color}</Text>
+                <Text>
+                  {colorCode === 'HEX' 
+                    ? choices.find(item => item.order === 2).hexColor
+                    : choices.find(item => item.order === 2).decimalColor
+                  }
+                </Text>
               </Pressable>
             </View>
     

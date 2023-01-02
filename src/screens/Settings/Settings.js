@@ -5,7 +5,7 @@ import { useSettings, useSettingsDispatch } from "../../context/SettingContext";
 
 export default function Settings(){
 
-    const darkMode = useSettings().isDarkMode
+    const {isDarkMode : darkMode, colorCode} = useSettings()
 
     const dispatch = useSettingsDispatch()
 
@@ -16,10 +16,18 @@ export default function Settings(){
         })
     }
 
+    function changeColorCode(){
+        dispatch({
+            type: "setColorCode",
+            colorCode: colorCode === 'HEX' ? 'DEC' : 'HEX'
+        })
+    }
+
     return(
         <View style={styles.container(darkMode)} >
 
             <Button title = "Change Dark Mode" onPress={changeDarkMode} />
+            <Button title = "Change Color Code" onPress={changeColorCode} />
         </View>
     )
 }
