@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import colors from "../../Colors";
+import { useSettings } from "../../context/SettingContext";
 
 
 
@@ -12,7 +13,7 @@ export default function Home({ navigation }){
     
       const [isPlaying, setIsPlaying] = useState(true)
     
-      const [darkMode, setDarkmode] = useState(true)
+      const darkMode = useSettings().isDarkMode
     
       const selected = useRef(null)
     
