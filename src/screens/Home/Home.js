@@ -133,8 +133,7 @@ export default function Home({ navigation }){
               </Pressable>
             )}
           </View>
-    
-    
+
         </SafeAreaView>
       );
     }
