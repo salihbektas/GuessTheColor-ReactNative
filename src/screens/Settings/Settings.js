@@ -5,7 +5,7 @@ import { useSettings, useSettingsDispatch } from "../../context/SettingContext";
 
 export default function Settings(){
 
-    const {isDarkMode : darkMode, colorCode} = useSettings()
+    const {isDarkMode : darkMode, colorCode, maxStreak} = useSettings()
 
     const dispatch = useSettingsDispatch()
 
@@ -25,9 +25,11 @@ export default function Settings(){
 
     return(
         <View style={styles.container(darkMode)} >
-
+            <Text style={{color: darkMode ? colors.light : colors.dark}}>{`Theme: ${darkMode ? "dark" : "light"}`}</Text>
             <Button title = "Change Dark Mode" onPress={changeDarkMode} />
+            <Text style={{color: darkMode ? colors.light : colors.dark}}>{`ColorCode: ${colorCode}`}</Text>
             <Button title = "Change Color Code" onPress={changeColorCode} />
+            <Text style={{color: darkMode ? colors.light : colors.dark}}>{`MaxStreak: ${maxStreak}`}</Text>
         </View>
     )
 }
@@ -37,6 +39,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: isDarkMode ? colors.dark : colors.light,
         alignItems: 'center',
-        justifyContent: "center"
+        justifyContent: "space-evenly"
       }),
 })

@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import colors from "../../Colors";
-import { useSettings } from "../../context/SettingContext";
+import { useSettings, useSettingsDispatch } from "../../context/SettingContext";
 
 
 
@@ -14,12 +14,11 @@ export default function Home({ navigation }){
       ])
     
       const [isPlaying, setIsPlaying] = useState(true)
-    
-      const {isDarkMode : darkMode, colorCode} = useSettings()
-
-    
+      const [currentStreak, setCurrentStreak] = useState(0)
       const selected = useRef(null)
-    
+      const {isDarkMode : darkMode, colorCode, maxStreak} = useSettings()
+      const dispatch = useSettingsDispatch()
+
       function randomColorGenerator(){
         let r, g, b;
     
@@ -96,6 +95,11 @@ export default function Home({ navigation }){
           return
     
         selected.current = buttonOrder
+
+        if(choices.findIndex(item => item.order === buttonOrder) === 0)
+          setCurrentStreak(streak => streak+1)
+        else
+          setCurrentStreak(0)
     
       }
     
@@ -108,6 +112,14 @@ export default function Home({ navigation }){
       useEffect(()=> {
         generateChoices()
       },[])
+
+      useEffect(() => {
+        if(currentStreak > maxStreak)
+          dispatch({
+            type: "setMaxStreak",
+            maxStreak: currentStreak
+          })
+      }, [currentStreak])
       
       
       return (
@@ -115,7 +127,7 @@ export default function Home({ navigation }){
           <StatusBar style={darkMode ? "light" : "dark"} />
           <View style={styles.mainSide} >
             <View style={styles.dashboard} >
-              <Text style={styles.streak(darkMode)}>streak: #</Text>
+              <Text style={styles.streak(darkMode)}>streak: {currentStreak}</Text>
               <Pressable style={styles.settings(darkMode)} onPress={() => navigation.navigate('Settings')} />
             </View>
     
