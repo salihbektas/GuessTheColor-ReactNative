@@ -3,6 +3,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SettingsProvider } from './src/context/SettingContext';
 import Home from './src/screens/Home/Home';
 import Settings from './src/screens/Settings/Settings';
+import * as SplashScreen from 'expo-splash-screen';
+
+
+SplashScreen.preventAutoHideAsync()
 
 const Stack = createNativeStackNavigator();
 

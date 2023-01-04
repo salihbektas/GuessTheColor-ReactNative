@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import colors from "../../Colors";
 import { useSettings, useSettingsDispatch } from "../../context/SettingContext";
-
+import * as SplashScreen from 'expo-splash-screen';
 
 
 export default function Home({ navigation }){
@@ -12,6 +12,8 @@ export default function Home({ navigation }){
         {decimalColor:"", hexColor:"#", order:1},
         {decimalColor:"", hexColor:"#", order:2}
       ])
+
+      const [appIsReady, setAppIsReady] = useState(false)
     
       const [isPlaying, setIsPlaying] = useState(true)
       const [currentStreak, setCurrentStreak] = useState(0)
@@ -120,10 +122,31 @@ export default function Home({ navigation }){
             maxStreak: currentStreak
           })
       }, [currentStreak])
+
+      useEffect(() => {
+        async function prepare() {
+          try {
+    
+          } catch (e) {
+            console.warn(e);
+          } finally {
+            setAppIsReady(true);
+          }
+        }
+    
+        prepare();
+      }, []);
+    
+    
+      const onLayoutRootView = useCallback(async () => {
+        if (appIsReady) {
+          await SplashScreen.hideAsync();
+        }
+      }, [appIsReady]);
       
       
       return (
-        <SafeAreaView style={styles.container(darkMode)}>
+        <SafeAreaView style={styles.container(darkMode)} onLayout={onLayoutRootView}>
           <StatusBar style={darkMode ? "light" : "dark"} />
           <View style={styles.mainSide} >
             <View style={styles.dashboard} >
