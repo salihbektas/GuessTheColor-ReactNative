@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import colors from "../../Colors";
 import { useSettings, useSettingsDispatch } from "../../context/SettingContext";
 import * as SplashScreen from 'expo-splash-screen';
@@ -46,7 +46,7 @@ export default function Home({ navigation }){
           if(value < 16)
           hexColor += "0"
     
-          hexColor += value.toString(16)
+          hexColor += value.toString(16).toUpperCase()
         })
     
         answer.hexColor = hexColor
@@ -71,7 +71,7 @@ export default function Home({ navigation }){
             if(fakeColor < 16)
               hexColor += "0"
             
-            hexColor += fakeColor.toString(16)
+            hexColor += fakeColor.toString(16).toUpperCase()
             decimalColor += fakeColor + ','
           })
     
@@ -150,15 +150,17 @@ export default function Home({ navigation }){
           <StatusBar style={darkMode ? "light" : "dark"} />
           <View style={styles.mainSide} >
             <View style={styles.dashboard} >
-              <Text style={styles.streak(darkMode)}>streak: {currentStreak}</Text>
-              <Pressable style={styles.settings(darkMode)} onPress={() => navigation.navigate('Settings')} />
+              <Text style={styles.streak(darkMode)}>Streak: {currentStreak}</Text>
+              <Pressable onPress={() => navigation.navigate('Settings')} >
+                <Image source={require("../../../assets/setting.png")} style={styles.settings(darkMode)} />
+              </Pressable>
             </View>
     
             <View style={styles.colorWindow(choices[0].hexColor, darkMode)} />
             
             <View style={styles.choicesArea}>
               <Pressable style={styles.choice(isPlaying, selected.current === 0, choices.findIndex(item => item.order === 0) === 0)} onPress={() => onPressAnswer(0)}>
-                <Text>
+                <Text style={styles.text}>
                   {colorCode === 'HEX' 
                     ? choices.find(item => item.order === 0).hexColor
                     : choices.find(item => item.order === 0).decimalColor
@@ -167,7 +169,7 @@ export default function Home({ navigation }){
               </Pressable>
     
               <Pressable style={styles.choice(isPlaying, selected.current === 1, choices.findIndex(item => item.order === 1) === 0)} onPress={() => onPressAnswer(1)}>
-                <Text>
+                <Text style={styles.text}>
                   {colorCode === 'HEX' 
                     ? choices.find(item => item.order === 1).hexColor
                     : choices.find(item => item.order === 1).decimalColor
@@ -176,7 +178,7 @@ export default function Home({ navigation }){
               </Pressable>
     
               <Pressable style={styles.choice(isPlaying, selected.current === 2, choices.findIndex(item => item.order === 2) === 0)} onPress={() => onPressAnswer(2)}>
-                <Text>
+                <Text style={styles.text}>
                   {colorCode === 'HEX' 
                     ? choices.find(item => item.order === 2).hexColor
                     : choices.find(item => item.order === 2).decimalColor
@@ -189,7 +191,7 @@ export default function Home({ navigation }){
           <View style={styles.bottomSide}>
             {!isPlaying && (
               <Pressable style={styles.nextButton} onPress={onPressNext}>
-                <Text>next question</Text>
+                <Text style={styles.text}>next color</Text>
               </Pressable>
             )}
           </View>
@@ -222,20 +224,19 @@ export default function Home({ navigation }){
     
       streak: (darkMode) => ({
         color: darkMode ? colors.light : colors.dark,
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: "700"
       }),
     
       settings: (darkMode) => ({
         height: 30,
         width: 30,
-        backgroundColor: darkMode ? colors.light : colors.dark,
-        borderRadius: 8
+        tintColor: darkMode ? colors.light : colors.dark,
       }),
     
       colorWindow: (color, isDarkMode) => ({
         height: "60%",
-        width: "75%",
+        width: "95%",
         borderRadius: 15,
         borderWidth: 2,
         borderColor: isDarkMode ? colors.light : colors.dark,
@@ -249,12 +250,27 @@ export default function Home({ navigation }){
       },
     
       choice: (isPlaying, isSelected, isCorrenct) => ({
-        backgroundColor: isPlaying ? colors.secondary : isCorrenct ? colors.correct : isSelected ? colors.wrong : colors.secondary,
+        backgroundColor: isPlaying 
+          ? colors.secondary 
+          : isCorrenct 
+            ? colors.correct 
+            : isSelected 
+              ? colors.wrong 
+              : colors.secondary,
         padding: 8,
-        borderRadius: 6
+        borderRadius: 6,
+        width: "30%"
       }),
+
+      text: {
+        fontSize: 18,
+        alignSelf: "center"
+      },
       
-      bottomSide: {flex:1},
+      bottomSide: {
+        flex:1,
+        width: "30%"
+      },
     
       nextButton: {
         backgroundColor: colors.primary,
