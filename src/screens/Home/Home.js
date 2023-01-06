@@ -4,6 +4,7 @@ import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-na
 import colors from "../../Colors";
 import { useSettings, useSettingsDispatch } from "../../context/SettingContext";
 import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function Home({ navigation }){
@@ -18,7 +19,7 @@ export default function Home({ navigation }){
       const [isPlaying, setIsPlaying] = useState(true)
       const [currentStreak, setCurrentStreak] = useState(0)
       const selected = useRef(null)
-      const {isDarkMode : darkMode, colorCode, maxStreak} = useSettings()
+      const {darkMode, colorCode, maxStreak} = useSettings()
       const dispatch = useSettingsDispatch()
 
       function randomColorGenerator(){
@@ -125,11 +126,20 @@ export default function Home({ navigation }){
 
       useEffect(() => {
         async function prepare() {
+          let configs
           try {
-    
+            configs = await AsyncStorage.getItem('configs')
+            configs = configs != null ? JSON.parse(configs) : null
           } catch (e) {
             console.warn(e);
           } finally {
+            if(configs)
+              dispatch({
+                type: "load",
+                maxStreak: configs.maxStreak,
+                colorCode: configs.colorCode,
+                darkMode: configs.darkMode
+              })
             setAppIsReady(true);
           }
         }
@@ -143,7 +153,11 @@ export default function Home({ navigation }){
           await SplashScreen.hideAsync();
         }
       }, [appIsReady]);
-      
+
+
+      if (!appIsReady) {
+        return null;
+      }
       
       return (
         <SafeAreaView style={styles.container(darkMode)} onLayout={onLayoutRootView}>

@@ -10,7 +10,7 @@ export default function Settings({ navigation }) {
   const [themes, setThemes] = useState([{ label: 'DARK', value: true }, { label: 'LIGHT', value: false }])
   const [colorCodes, setColorCodes] = useState([{ label: 'R,G,B', value: 'DEC' }, { label: '#HEX', value: 'HEX' }])
 
-  const { isDarkMode: darkMode, colorCode, maxStreak } = useSettings()
+  const { darkMode, colorCode, maxStreak } = useSettings()
 
   const [valueTheme, setValueTheme] = useState(darkMode);
   const [valueColorCode, setValueColorCode] = useState(colorCode);
